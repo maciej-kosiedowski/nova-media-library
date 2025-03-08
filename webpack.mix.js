@@ -8,6 +8,6 @@ mix
   .vue({ version: 3 })
   .nova("classic-o/nova-media-library");
 
-  mix.alias({
-    'laravel-nova': path.join(__dirname, 'vendor/laravel/nova/resources/js/mixins/packages.js'),
-  });
+  // mix.alias({
+  //   'laravel-nova': path.join(__dirname, 'vendor/laravel/nova/resources/js/mixins/packages.js'),
+  // });
