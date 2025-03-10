@@ -1,6 +1,6 @@
 <template>
-  <div id="nml_cropper" class="popup fixed top-10 left-0 right-0 pin z-20 py-view bg-primary-70% overflow-y-auto">
-    <div class="absolute pin z-20" @click="$parent.$parent.popup = 'info'"></div>
+  <div id="nml_cropper" class="popup fixed top-10 left-0 right-0 inset-0 z-20 py-12 bg-primary-70% overflow-y-auto">
+    <div class="absolute inset-0 z-20" @click="$parent.$parent.popup = 'info'"></div>
 
     <div class="relative z-30 bg-white overflow-hidden rounded-lg shadow-lg m-auto">
 

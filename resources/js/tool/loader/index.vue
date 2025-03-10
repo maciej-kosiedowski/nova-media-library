@@ -13,7 +13,7 @@
       </div>
     </template>
 
-    <div class="fixed pin z-30 bg-white-50% loader" v-if="$parent.loading">
+    <div class="fixed inset-0 z-30 bg-white-50% loader" v-if="$parent.loading">
       <loading-view />
     </div>
 
