@@ -7,34 +7,34 @@
       <button type="button" class="nml-close select-none" @click="$parent.$parent.item = null">&times;</button>
 
     <div class="flex border-b border-gray-300">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white">{{ __('ID') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3">{{ __('ID') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">{{ $parent.$parent.item.id }}</div>
     </div>
 
       <div class="flex border-b border-40">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white">{{ __('Uploaded') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3">{{ __('Uploaded') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">{{ $parent.$parent.item.created }}</div>
       </div>
 
       <div class="flex border-b border-40">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white">{{ __('Type') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3">{{ __('Type') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">{{ $parent.$parent.item.type }}</div>
       </div>
 
       <div class="flex border-b border-40">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white">{{ __('Size') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3">{{ __('Size') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">{{ $parent.$parent.item.options.size }}</div>
       </div>
 
       <div class="flex border-b border-40">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white leading-36">{{ __('Title') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 leading-36">{{ __('Title') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">
           <input class="form-control form-input w-full shadow-md" v-model="$parent.$parent.item.title">
         </div>
       </div>
 
       <div class="flex border-b border-40" v-if="$parent.$parent.config.can_private">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white">{{ __('Private') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3">{{ __('Private') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">
           <checkbox
             class="cursor-pointer"
@@ -45,7 +45,7 @@
       </div>
 
       <div class="flex border-b border-40" v-if="`folders` === $parent.$parent.config.store">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white leading-36">{{ __('Move to folder') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 leading-36">{{ __('Move to folder') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">
           <select v-model="folder" class="shadow-md block border-0 cursor-pointer form-control form-select w-full">
             <option :value="null"></option>
@@ -60,7 +60,7 @@
       </div>
 
       <div class="flex border-b border-40">
-        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3 text-white">{{ __('Url') }}</div>
+        <div class="md:w-1/4 @sm/peekable:w-1/4 @md/modal:w-1/4 md:py-3 @sm/peekable:py-3 @md/modal:py-3">{{ __('Url') }}</div>
         <div class="break-all md:w-3/4 @sm/peekable:w-3/4 @md/modal:w-3/4 md:py-3 @sm/peekable:py-3 md/modal:py-3 lg:break-words @md/peekable:break-words @lg/modal:break-words py-4">
             <a class="bg-blue-500 text-blue-500 font-bold no-underline hover:text-blue-700" :href="$parent.$parent.item.url" target="_blank">{{ __('Open') }}</a>
             <button type="button" class="text-gray-600 font-bold no-underline float-right py-2 px-4 bg-blue-950 rounded"
