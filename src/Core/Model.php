@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
  * @property $private
  * @property $lp
  * @property $options
- *
  * @property $url
  * @property $path
  */
@@ -28,38 +27,33 @@ class Model extends \Illuminate\Database\Eloquent\Model
 
     protected $appends = ['url', 'path'];
 
-    protected $casts = [
-        'created' => 'datetime',
-        'options' => 'object',
-    ];
-
-    public function getUrlAttribute()
+    protected function url(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
-        if ($this->lp) {
-            return config('nova-media-library.url', '') . substr($this->path, 7);
-        }
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: function () {
+            if ($this->lp) {
+                return config('nova-media-library.url', '') . substr($this->path, 7);
+            }
+            if (! $this->private) {
+                return config('nova-media-library.url', '') . $this->path;
+            }
+            if (Route::has('nml-private-file')) {
+                return route('nml-private-file', ['id' => $this->id, 'img_size' => request('img_size')]);
+            }
 
-        if (! $this->private) {
-            return config('nova-media-library.url', '') . $this->path;
-        }
-
-        if (Route::has('nml-private-file')) {
-            return route('nml-private-file', [ 'id' => $this->id, 'img_size' => request('img_size') ]);
-        }
-
-        return null;
+            return null;
+        });
     }
 
-    public function getPathAttribute()
+    protected function path(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
-        return Helper::folder($this->folder . $this->name);
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: fn () => Helper::folder($this->folder . $this->name));
     }
 
-    public function search()
+    public function search(\Illuminate\Http\Request $request)
     {
-        $param = request()->all();
-        $title = trim(htmlspecialchars(request('title', '')));
-        $folder = trim(htmlspecialchars(request('folder', '')));
+        $param = $request->all();
+        $title = trim(htmlspecialchars((string) $request->input('title', '')));
+        $folder = trim(htmlspecialchars((string) $request->input('folder', '')));
 
         $step = config('nova-media-library.step');
 
@@ -100,6 +94,14 @@ class Model extends \Illuminate\Database\Eloquent\Model
                 ->take($step)
                 ->orderBy('id', 'DESC')
                 ->get() ?? [],
+        ];
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'created' => 'datetime',
+            'options' => 'object',
         ];
     }
 }

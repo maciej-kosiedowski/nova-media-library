@@ -2,24 +2,23 @@
 
 namespace ClassicO\NovaMediaLibrary;
 
+use ClassicO\NovaMediaLibrary\Core\Crop;
+use ClassicO\NovaMediaLibrary\Core\Helper;
+use ClassicO\NovaMediaLibrary\Core\Model;
+use ClassicO\NovaMediaLibrary\Core\Upload;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use ClassicO\NovaMediaLibrary\Core\{
-    Crop,
-    Helper,
-    Model,
-    Upload
-};
 
 class API
 {
     /**
      * Upload file by path\url
      *
-     * @param string $path - path|url of file
-     * @param string|null $folder - where store file if use `store` = 'folders'
-     * @throws \Exception
+     * @param  string  $path  - path|url of file
+     * @param  string|null  $folder  - where store file if use `store` = 'folders'
      * @return true
+     *
+     * @throws \Exception
      */
     public static function upload($path, $folder = null)
     {
@@ -31,15 +30,11 @@ class API
 
             $file = new UploadedFile(storage_path('app/nml_temp/' . $base), $base);
 
-            if (! $file) {
-                throw new \Exception(__('The file was not downloaded for unknown reasons'), 0);
-            }
+            throw_unless($file, \Exception::class, __('The file was not downloaded for unknown reasons'), 0);
 
             $upload = new Upload($file);
 
-            if (! $upload->setType()) {
-                throw new \Exception(__('Forbidden file format'), 1);
-            }
+            throw_unless($upload->setType(), \Exception::class, __('Forbidden file format'), 1);
 
             $upload->setWH();
 
@@ -49,9 +44,7 @@ class API
 
             $upload->setFile();
 
-            if (! $upload->checkSize()) {
-                throw new \Exception(__('File size limit exceeded'), 2);
-            }
+            throw_unless($upload->checkSize(), \Exception::class, __('File size limit exceeded'), 2);
 
             $item = $upload->save();
 
@@ -70,9 +63,9 @@ class API
     /**
      * Returns files by ids
      *
-     * @param int|array $ids - id or array of ids
-     * @param string|null $imgSize - label from config `media-library.resize.sizes`
-     * @param bool $object - returns full object of files data from DB (by default returns only urls)
+     * @param  int|array  $ids  - id or array of ids
+     * @param  string|null  $imgSize  - label from config `media-library.resize.sizes`
+     * @param  bool  $object  - returns full object of files data from DB (by default returns only urls)
      * @return mixed
      */
     public static function getFiles($ids, $imgSize = null, $object = false)
@@ -95,9 +88,7 @@ class API
             }
 
             return $object ? (object) $item : $item['url'];
-        })->reject(function ($value) {
-            return ! $value;
-        });
+        })->reject(fn ($value) => ! $value);
 
         return is_array($ids) ? $array : ($array[0] ?? 1);
     }
@@ -105,8 +96,8 @@ class API
     /**
      * Generate image url for needed size
      *
-     * @param string $url - image url
-     * @param string $size - image size from `media-library.resize.sizes`
+     * @param  string  $url  - image url
+     * @param  string  $size  - image size from `media-library.resize.sizes`
      * @return string
      */
     public static function getImageSize($url, $size)
@@ -121,8 +112,8 @@ class API
      * Return file content
      * Must be used after checking user access in the controller
      *
-     * @param string $path - data from DB ($item->path)
-     * @param string|null $size - image size from `media-library.resize.sizes`
+     * @param  string  $path  - data from DB ($item->path)
+     * @param  string|null  $size  - image size from `media-library.resize.sizes`
      * @return mixed
      */
     public static function getPrivateFile($path, $size = null)
@@ -139,7 +130,7 @@ class API
             $start = 0;
 
             if (isset($_SERVER['HTTP_RANGE'])) {
-                $temp = explode('bytes=', $_SERVER['HTTP_RANGE'], 2);
+                $temp = explode('bytes=', (string) $_SERVER['HTTP_RANGE'], 2);
                 $start = (float) (explode('-', $temp[1], 1))[0];
                 $length = $bytes - $start;
             }
@@ -150,7 +141,7 @@ class API
                 ->header('Content-Length', $length)
                 ->header('Content-Range', "bytes {$start}-{$end}/{$bytes}")
                 ->header('Content-Disposition', 'filename="' . array_pop($name) . '"');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return response()->noContent(404);
         }
     }

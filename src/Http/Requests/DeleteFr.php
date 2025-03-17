@@ -2,8 +2,8 @@
 
 namespace ClassicO\NovaMediaLibrary\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class DeleteFr extends FormRequest
@@ -18,7 +18,7 @@ class DeleteFr extends FormRequest
     public function rules()
     {
         return [
-            'ids' => 'required|array',
+            'ids' => ['required', 'array'],
         ];
     }
 

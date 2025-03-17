@@ -2,11 +2,11 @@
 
 namespace ClassicO\NovaMediaLibrary;
 
-use Laravel\Nova\Nova;
-use Laravel\Nova\Tool;
+use ClassicO\NovaMediaLibrary\Core\Helper;
 use Illuminate\Http\Request;
 use Laravel\Nova\Menu\MenuSection;
-use ClassicO\NovaMediaLibrary\Core\Helper;
+use Laravel\Nova\Nova;
+use Laravel\Nova\Tool;
 
 class NovaMediaLibrary extends Tool
 {
@@ -20,7 +20,7 @@ class NovaMediaLibrary extends Tool
         Nova::script('nova-media-library', __DIR__ . '/../dist/js/tool.js');
         Nova::style('nova-media-library', __DIR__ . '/../dist/css/tool.css');
 
-        Nova::provideToScript([ 'novaMediaLibrary' => $this->config() ]);
+        Nova::provideToScript(['novaMediaLibrary' => $this->config()]);
     }
 
     public function menu(Request $request)
@@ -36,16 +36,16 @@ class NovaMediaLibrary extends Tool
         $types = data_get($cfg, 'types');
 
         $config = [
-            'can_private' => 's3' == data_get($cfg, 'disk'),
+            'can_private' => data_get($cfg, 'disk') == 's3',
             'disk' => data_get($cfg, 'disk', 'public'),
             'front_crop' => data_get($cfg, 'resize.front_crop', false),
             'lang' => $this->lang(),
             'store' => data_get($cfg, 'store', 'together'),
         ];
 
-        if ('folders' == $config['store']) {
+        if ($config['store'] == 'folders') {
             $config['folders'] = [];
-        }//Helper::directories();
+        }// Helper::directories();
 
         if (is_array($types)) {
             $accept = [];

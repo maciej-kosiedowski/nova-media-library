@@ -2,8 +2,8 @@
 
 namespace ClassicO\NovaMediaLibrary\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UploadFr extends FormRequest
@@ -18,7 +18,7 @@ class UploadFr extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required|file',
+            'file' => ['required', 'file'],
         ];
     }
 

@@ -2,34 +2,33 @@
 
 namespace ClassicO\NovaMediaLibrary\Core;
 
-use Illuminate\Support\Str;
 use ClassicO\NovaMediaLibrary\API;
+use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 
 class Crop
 {
-    public $image = null;
-    public $form = [];
+    public $image;
 
     private $config = [];
-    private $file = null;
+
+    private $file;
+
     private $bytes = 0;
 
-    public function __construct($form)
+    public function __construct(public $form)
     {
         $this->config = config('nova-media-library.resize');
 
-        if (! $this->config['front_crop'] or ! class_exists('\Intervention\Image\ImageManager')) {
+        if (! $this->config['front_crop'] or ! class_exists(\Intervention\Image\ImageManager::class)) {
             return;
         }
-
-        $this->form = $form;
         $this->image = Model::findOrFail($this->form['id'])->toArray();
     }
 
     public function make()
     {
-        $manager = new ImageManager([ 'driver' => $this->config['driver'] ]);
+        $manager = new ImageManager(['driver' => $this->config['driver']]);
         $image = $manager->make(
             Helper::storage()->readStream(
                 Helper::folder($this->image['folder']) . $this->image['name']
@@ -49,8 +48,8 @@ class Crop
     {
         $this->image['created'] = now();
 
-        if (0 === $this->form['over']) {
-            $ext = explode('.', $this->image['name']);
+        if ($this->form['over'] === 0) {
+            $ext = explode('.', (string) $this->image['name']);
             $name = explode('-', $ext[0]);
             array_pop($name);
 
@@ -65,33 +64,32 @@ class Crop
                 Helper::visibility($this->image['private'])
             )
         ) {
-            if (1 === $this->form['over']) {
+            if ($this->form['over'] === 1) {
                 $item = Model::find($this->form['id']);
                 $item->update($this->image);
                 self::createSizes($item);
 
                 return $item;
-            } else {
-                $item = Model::create($this->image);
-                self::createSizes($item);
-
-                return $item;
             }
+            $item = Model::create($this->image);
+            self::createSizes($item);
+
+            return $item;
         }
 
         return false;
     }
 
-    //#### Crop additional image sizes #####
+    // #### Crop additional image sizes #####
 
     public static function createSizes($item)
     {
         $config = config('nova-media-library.resize');
 
         if (
-            'image' != data_get($item, 'options.mime')
+            data_get($item, 'options.mime') != 'image'
              or ! is_array($config)
-             or ! class_exists('\Intervention\Image\ImageManager')
+             or ! class_exists(\Intervention\Image\ImageManager::class)
         ) {
             return;
         }
@@ -118,7 +116,7 @@ class Crop
             }
         }
 
-        $manager = new \Intervention\Image\ImageManager([ 'driver' => $config['driver'] ]);
+        $manager = new \Intervention\Image\ImageManager(['driver' => $config['driver']]);
 
         foreach ($config['sizes'] as $size => $data) {
             if (! is_int($data[0]) and ! is_int($data[1]) or self::cantResize($item, $data)) {
@@ -146,7 +144,7 @@ class Crop
                 ) {
                     $sizes[] = $size;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
         }
 

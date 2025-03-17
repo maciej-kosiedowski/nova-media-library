@@ -2,8 +2,8 @@
 
 namespace ClassicO\NovaMediaLibrary\Http\Middleware;
 
-use Laravel\Nova\Nova;
 use ClassicO\NovaMediaLibrary\NovaMediaLibrary;
+use Laravel\Nova\Nova;
 
 class Authorize
 {
@@ -16,9 +16,9 @@ class Authorize
      */
     public function handle($request, $next)
     {
-        $tool = collect(Nova::registeredTools())->first([$this, 'matchesTool']);
+        $tool = collect(Nova::registeredTools())->first($this->matchesTool(...));
 
-        return optional($tool)->authorize($request) ? $next($request) : abort(403);
+        return $tool?->authorize($request) ? $next($request) : abort(403);
     }
 
     /**

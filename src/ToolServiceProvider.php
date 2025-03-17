@@ -2,10 +2,10 @@
 
 namespace ClassicO\NovaMediaLibrary;
 
-use Laravel\Nova\Nova;
+use ClassicO\NovaMediaLibrary\Http\Middleware\Authorize;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use ClassicO\NovaMediaLibrary\Http\Middleware\Authorize;
+use Laravel\Nova\Nova;
 
 class ToolServiceProvider extends ServiceProvider
 {

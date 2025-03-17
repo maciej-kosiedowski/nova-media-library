@@ -2,8 +2,8 @@
 
 namespace ClassicO\NovaMediaLibrary\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class FolderDelFr extends FormRequest
@@ -18,7 +18,7 @@ class FolderDelFr extends FormRequest
     public function rules()
     {
         return [
-            'folder' => 'required|string|regex:/^[a-zA-Z0-9_\-\/]+$/',
+            'folder' => ['required', 'string', 'regex:/^[a-zA-Z0-9_\-\/]+$/'],
         ];
     }
 

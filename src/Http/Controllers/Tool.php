@@ -3,22 +3,18 @@
 namespace ClassicO\NovaMediaLibrary\Http\Controllers;
 
 use ClassicO\NovaMediaLibrary\API;
+use ClassicO\NovaMediaLibrary\Core\Crop;
+use ClassicO\NovaMediaLibrary\Core\Helper;
+use ClassicO\NovaMediaLibrary\Core\Model;
+use ClassicO\NovaMediaLibrary\Core\Upload;
+use ClassicO\NovaMediaLibrary\Http\Requests\CropFr;
+use ClassicO\NovaMediaLibrary\Http\Requests\DeleteFr;
+use ClassicO\NovaMediaLibrary\Http\Requests\FolderDelFr;
+use ClassicO\NovaMediaLibrary\Http\Requests\FolderNewFr;
+use ClassicO\NovaMediaLibrary\Http\Requests\GetFr;
+use ClassicO\NovaMediaLibrary\Http\Requests\UpdateFr;
+use ClassicO\NovaMediaLibrary\Http\Requests\UploadFr;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use ClassicO\NovaMediaLibrary\Core\{
-    Crop,
-    Helper,
-    Model,
-    Upload
-};
-use ClassicO\NovaMediaLibrary\Http\Requests\{
-    CropFr,
-    DeleteFr,
-    FolderDelFr,
-    FolderNewFr,
-    GetFr,
-    UpdateFr,
-    UploadFr,
-};
 
 class Tool
 {
@@ -26,7 +22,7 @@ class Tool
     {
         $preview = config('nova-media-library.resize.preview');
 
-        $data = (new Model())->search();
+        $data = (new Model)->search(request());
         $data['array'] = collect($data['array'])->map(function ($item) use ($preview) {
             if (! $item->url) {
                 $item = $item->toArray();
@@ -40,10 +36,10 @@ class Tool
         return $data;
     }
 
-    public function private()
+    public function private(\Illuminate\Http\Request $request)
     {
-        $item = Model::find(request('id'));
-        $size = request('img_size');
+        $item = Model::find($request->input('id'));
+        $size = $request->input('img_size');
 
         if (! $item or ! $item->path) {
             return response()->noContent(404);
@@ -58,35 +54,29 @@ class Tool
 
     public function upload(UploadFr $fr)
     {
-        $file = request()->file('file');
+        $file = $fr->file('file');
         $file_name = " ({$file->getClientOriginalName()})";
 
         $upload = new Upload($file);
 
-        if (! $upload->setType()) {
-            abort(422, __('Forbidden file format'));
-        }
+        abort_unless($upload->setType(), 422, __('Forbidden file format'));
 
         $upload->setWH();
 
-        $upload->setFolder(request('folder'));
+        $upload->setFolder($fr->input('folder'));
 
         $upload->setPrivate();
 
         $upload->setFile();
 
-        if (! $upload->checkSize()) {
-            abort(422, __('File size limit exceeded') . $file_name);
-        }
+        abort_unless($upload->checkSize(), 422, __('File size limit exceeded') . $file_name);
 
         $item = $upload->save();
 
         if ($item) {
             Crop::createSizes($item);
 
-            if ($upload->noResize) {
-                abort(200, __('Unsupported image type for resizing, only the original is uploaded') . $file_name);
-            }
+            abort_if($upload->noResize, 200, __('Unsupported image type for resizing, only the original is uploaded') . $file_name);
 
             $preview = config('nova-media-library.resize.preview');
             if (! $item->url) {
@@ -94,6 +84,7 @@ class Tool
                 $item['url'] = route('nml-private-file-admin', ['id' => $item['id']]);
             }
             $item['preview'] = Helper::preview($item, $preview);
+
             return $item;
         }
 
@@ -102,8 +93,8 @@ class Tool
 
     public function delete(DeleteFr $fr)
     {
-        $get = Model::find(request('ids'));
-        $delete = Model::whereIn('id', request('ids'))->delete();
+        $get = Model::find($fr->input('ids'));
+        $delete = Model::whereIn('id', $fr->input('ids'))->delete();
 
         if (count($get) > 0) {
             $array = [];
@@ -123,22 +114,20 @@ class Tool
             Helper::storage()->delete($array);
         }
 
-        return ['status' => ! ! $delete];
+        return ['status' => (bool) $delete];
     }
 
     public function update(UpdateFr $fr)
     {
-        $item = Model::find(request('id'));
+        $item = Model::find($fr->input('id'));
 
-        if (! $item) {
-            abort(422, __('Invalid id'));
-        }
+        abort_unless($item, 422, __('Invalid id'));
 
-        $item->title = request('title');
+        $item->title = $fr->input('title');
         $img_sizes = data_get($item->options, 'img_sizes', []);
 
-        if (request()->has('private') and 's3' === config('nova-media-library.disk')) {
-            $item->private = (bool) request('private');
+        if ($fr->has('private') and config('nova-media-library.disk') === 's3') {
+            $item->private = (bool) $fr->input('private');
             $visibility = Helper::visibility($item->private);
 
             Helper::storage()->setVisibility($item->path, $visibility);
@@ -148,9 +137,9 @@ class Tool
             }
         }
 
-        $folder = request('folder');
+        $folder = $fr->input('folder');
 
-        if ($folder and 'folders' === config('nova-media-library.store') and $folder !== $item->folder) {
+        if ($folder and config('nova-media-library.store') === 'folders' and $folder !== $item->folder) {
             $private = Helper::isPrivate($folder);
             $array = [[$item->path, Helper::folder($folder . $item->name)]];
 
@@ -179,15 +168,11 @@ class Tool
 
     public function crop(CropFr $fr)
     {
-        $crop = new Crop(request()->toArray());
+        $crop = new Crop($fr->toArray());
 
-        if (! $crop->form) {
-            abort(422, __('Crop module disabled'));
-        }
+        abort_unless($crop->form, 422, __('Crop module disabled'));
 
-        if (! $crop->image) {
-            abort(422, __('Invalid request data'));
-        }
+        abort_unless($crop->image, 422, __('Invalid request data'));
 
         $crop->make();
 
@@ -200,7 +185,7 @@ class Tool
 
     public function folderNew(FolderNewFr $fr)
     {
-        if (Helper::storage()->makeDirectory(Helper::folder(request('base') . request('folder') . '/'))) {
+        if (Helper::storage()->makeDirectory(Helper::folder($fr->input('base') . $fr->input('folder') . '/'))) {
             return ['folders' => Helper::directories()];
         }
 
@@ -209,7 +194,7 @@ class Tool
 
     public function folderDel(FolderDelFr $fr)
     {
-        if (Helper::storage()->deleteDirectory(Helper::folder(request('folder')))) {
+        if (Helper::storage()->deleteDirectory(Helper::folder($fr->input('folder')))) {
             return ['folders' => Helper::directories()];
         }
 
@@ -221,15 +206,14 @@ class Tool
         if ($request->get('searchQuery')) {
             $query = $request->get('searchQuery');
             $fetchedFolders = Helper::directories();
-            $filteredFolders = array_filter(
+
+            return array_filter(
                 $fetchedFolders,
-                fn ($folder) => str_contains(strtolower($folder), strtolower($query)),
+                fn ($folder) => str_contains(strtolower((string) $folder), strtolower((string) $query)),
                 ARRAY_FILTER_USE_KEY
             );
-
-            return $filteredFolders;
-        } else {
-            return Helper::directories();
         }
+
+        return Helper::directories();
     }
 }

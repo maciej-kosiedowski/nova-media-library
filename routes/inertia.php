@@ -14,6 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function (Request $request) {
-    return inertia('NovaMediaLibrary');
-});
+Route::get('/', fn (Request $request) => inertia('NovaMediaLibrary'));

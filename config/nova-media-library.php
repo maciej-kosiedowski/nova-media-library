@@ -5,6 +5,7 @@ return [
      * Default filesystem disk.
      *
      * @example `local` or `public` or `s3`
+     *
      * @var string
      */
     'disk' => env('FILESYSTEM_DRIVER', 'public'),
@@ -14,7 +15,7 @@ return [
      *
      * @var string
      */
-    'url' => 's3' == env('FILESYSTEM_DRIVER') ? env('AWS_URL', '') : env('APP_URL', '') . '/storage',
+    'url' => env('FILESYSTEM_DRIVER') == 's3' ? env('AWS_URL', '') : env('APP_URL', '') . '/storage',
 
     /**
      * Store files `together` or in separate `folders`
@@ -27,7 +28,7 @@ return [
      * Default file visibility (only for s3)
      * For disk `local` will be `true`, for `public` - `false`
      *
-     * @var boolean
+     * @var bool
      */
     'private' => false,
 
@@ -44,6 +45,7 @@ return [
      * Does not work when parameter `store` != `together`
      *
      * @example `Y-m`, `Y/m`, `Y-m/d`
+     *
      * @var string
      */
     'by_date' => '',
@@ -53,6 +55,7 @@ return [
      * Format: Label => ['array', 'of', 'extensions']
      *
      * @example ['*'] - allow you to save any file extensions to the specified type
+     *
      * @var array - not empty!
      */
     'types' => [
@@ -60,7 +63,7 @@ return [
         'Docs' => ['doc', 'xls', 'docx', 'xlsx', 'pdf'],
         'Audio' => ['mp3'],
         'Video' => ['mp4'],
-        //'Other' => ['*'],
+        // 'Other' => ['*'],
     ],
 
     /**
@@ -78,7 +81,7 @@ return [
     /**
      * The number of files that will be returned with each step
      *
-     * @var integer
+     * @var int
      */
     'step' => 40,
 
@@ -94,6 +97,7 @@ return [
      * Width and height can be integer or null. If one of them is null - will resize image proportionally.
      *
      * @see supports image formats: http://image.intervention.io/getting_started/formats.
+     *
      * @var array
      */
     'resize' => [
@@ -109,12 +113,12 @@ return [
         // Maximum width and height in pixels for the original image [ width, height, upSize, upWH ]
         // upSize {bool} - Crop image even if size will be larger. (If set to `false` - size image will be as original).
         // upWH {bool} - Crop even if width and height image less than limits.
-        'original' => [ 1200, null, false, false ],
+        'original' => [1200, null, false, false],
 
         // Crop additional image variations [ width, height, upSize, upWH ]
         'sizes' => [
-            'thumb' => [ 200, 200, true, false ],
-            'medium' => [ 800, null, true, false ],
+            'thumb' => [200, 200, true, false],
+            'medium' => [800, null, true, false],
         ],
 
         // Set `size name` from `sizes` above for preview in admin area or leave `null`

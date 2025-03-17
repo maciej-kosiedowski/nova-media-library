@@ -2,8 +2,8 @@
 
 namespace ClassicO\NovaMediaLibrary\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateFr extends FormRequest
@@ -18,9 +18,9 @@ class UpdateFr extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'required|numeric',
-            'title' => 'required|string|max:250',
-            'private' => 'boolean',
+            'id' => ['required', 'numeric'],
+            'title' => ['required', 'string', 'max:250'],
+            'private' => ['boolean'],
         ];
     }
 

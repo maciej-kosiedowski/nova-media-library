@@ -2,9 +2,9 @@
   <div class="flex flex-wrap mb-6 select-none">
 
     <div class="relative mr-4 max-w-full">
-      <icon type="search" class="absolute left-0 search-icon-center mr-3 mt-1.5 text-70 ml-2" />
+      <icon type="search" class="absolute left-0 search-icon-center mr-3 mt-1.5 text-70 ml-2"/>
       <input
-        class="form-control form-input w-search pl-search shadow-md w-full pl-10"
+        class="form-control form-input w-search pl-search shadow-md w-full pl-10 text-dark dark:text-white"
         type="search"
         :placeholder="__('Search by name')"
         v-model="$parent.filter.title"
@@ -13,7 +13,7 @@
     </div>
 
     <datepicker
-      class="form-control shadow-md max-w-full mr-4 text-center"
+      class="form-control shadow-md max-w-full mr-4 text-center text-dark dark:text-dark"
       :placeholder="uploadFromText"
       ref="uploadFrom"
       v-model="uploadFrom"
@@ -23,7 +23,7 @@
     />
 
     <datepicker
-      class="form-control shadow-md max-w-full text-center"
+      class="form-control shadow-md max-w-full text-center text-dark"
       :placeholder="uploadToText"
       ref="uploadTo"
       v-model="uploadTo"
@@ -41,7 +41,7 @@
       </svg>
     </div>
 
-    <select class="shadow-md block border-0 cursor-pointer form-control form-select"
+    <select class="shadow-md block border-0 cursor-pointer form-control form-select form-control-bordered  text-dark"
             v-if="types.length > 1"
             v-model="$parent.filter.type"
             @change="$parent.doSearch()">

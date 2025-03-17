@@ -2,8 +2,8 @@
 
 namespace ClassicO\NovaMediaLibrary\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class GetFr extends FormRequest
@@ -18,10 +18,10 @@ class GetFr extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'nullable|string',
-            'from' => 'nullable|date_format:Y-m-d',
-            'to' => 'nullable|date_format:Y-m-d',
-            'page' => 'required|integer|min:0',
+            'title' => ['nullable', 'string'],
+            'from' => ['nullable', 'date_format:Y-m-d'],
+            'to' => ['nullable', 'date_format:Y-m-d'],
+            'page' => ['required', 'integer', 'min:0'],
         ];
     }
 

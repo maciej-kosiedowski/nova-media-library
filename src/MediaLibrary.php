@@ -2,26 +2,27 @@
 
 namespace ClassicO\NovaMediaLibrary;
 
-use Laravel\Nova\Fields\Field;
-use ClassicO\NovaMediaLibrary\Core\Model;
 use ClassicO\NovaMediaLibrary\Core\Helper;
-use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Fields\SupportsDependentFields;
+use ClassicO\NovaMediaLibrary\Core\Model;
 use ClassicO\NovaMediaLibrary\Traits\CanResolveMedia;
+use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\SupportsDependentFields;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class MediaLibrary extends Field
 {
-    use SupportsDependentFields;
     use CanResolveMedia;
-    
+    use SupportsDependentFields;
+
     public $component = 'media-library-field';
-    private $preview = null;
+
+    private $preview;
 
     private function privateUrl($item)
     {
         if ($item and $item->private and ! $item->url) {
             $item = $item->toArray();
-            $item['url'] = route('nml-private-file-admin', [ 'id' => $item['id'] ]);
+            $item['url'] = route('nml-private-file-admin', ['id' => $item['id']]);
         }
         data_set($item, 'preview', Helper::preview($item, $this->preview));
 
@@ -63,9 +64,7 @@ class MediaLibrary extends Field
             ? $this->meta['nmlPreview'] : config('nova-media-library.resize.preview');
 
         if (is_array($value)) {
-            $this->value = collect($this->value)->map(function ($item) {
-                return $this->privateUrl($item);
-            });
+            $this->value = collect($this->value)->map(fn ($item) => $this->privateUrl($item));
         } elseif ($value) {
             $this->value = $this->privateUrl($this->value);
         }
@@ -80,14 +79,14 @@ class MediaLibrary extends Field
         if (! isset($this->meta['nmlTrix']) and ! isset($this->meta['nmlJsCallback']) and $request->exists($requestAttribute)) {
             $value = $request[$requestAttribute];
 
-            if (! $value or 'null' == $value) {
+            if (! $value or $value == 'null') {
                 $value = null;
             }
 
             if (isset($this->meta['nmlArray'])) {
-                $value = json_decode($request[$requestAttribute], true);
+                $value = json_decode((string) $request[$requestAttribute], true);
 
-                if (is_array($value) and true != config('nova-media-library.duplicates')) {
+                if (is_array($value) and config('nova-media-library.duplicates') != true) {
                     $value = array_unique($value);
                 }
             }
@@ -102,18 +101,18 @@ class MediaLibrary extends Field
      */
     public function hidden()
     {
-        return $this->withMeta([ 'nmlHidden' => true ]);
+        return $this->withMeta(['nmlHidden' => true]);
     }
 
     /**
      * Preview size of images (Label of cropped additional image variation)
      *
-     * @param null|string $size - label from config: resize.sizes
+     * @param  null|string  $size  - label from config: resize.sizes
      * @return $this
      */
     public function preview($size)
     {
-        return $this->withMeta([ 'nmlPreview' => $size ]);
+        return $this->withMeta(['nmlPreview' => $size]);
     }
 
     /**
@@ -121,7 +120,7 @@ class MediaLibrary extends Field
      * Table column must be `TEXT` nullable
      * Set casts as `array` in model
      *
-     * @param string $display - display method (gallery or list)
+     * @param  string  $display  - display method (gallery or list)
      * @return $this
      */
     public function array($display = 'auto')
@@ -130,13 +129,13 @@ class MediaLibrary extends Field
             $display = 'auto';
         }
 
-        return $this->withMeta([ 'nmlArray' => $display ]);
+        return $this->withMeta(['nmlArray' => $display]);
     }
 
     /**
      * Limit display by file extension
      *
-     * @param array|string $types
+     * @param  array|string  $types
      * @return $this
      */
     public function types($types)
@@ -152,7 +151,7 @@ class MediaLibrary extends Field
      * To connect media field to trix editor, set here unique name
      * and to Trix field add extra attribute `nml-trix` with this name
      *
-     * @param string $name - unique name of Trix field
+     * @param  string  $name  - unique name of Trix field
      * @return $this
      *
      * @example
@@ -162,15 +161,15 @@ class MediaLibrary extends Field
     public function trix($name = 'unique_trix_name')
     {
         return $this->onlyOnForms()
-            ->withMeta([ 'nmlTrix' => $name ]);
+            ->withMeta(['nmlTrix' => $name]);
     }
 
     /**
      * Use media field with custom callback.
      *
-     * @param string $callback - Name of the callback function in JS
-     *        (First parameter will be array of files, second - options)
-     * @param mixed $options - add custom options
+     * @param  string  $callback  - Name of the callback function in JS
+     *                            (First parameter will be array of files, second - options)
+     * @param  mixed  $options  - add custom options
      * @return $this
      *
      * @example
@@ -178,9 +177,9 @@ class MediaLibrary extends Field
      *  // In any JS file create function:
      *  window.callbackName = (array, options) => { ... }
      */
-    public function jsCallback($callback, $options = [])
+    public function jsCallback($callback, mixed $options = [])
     {
         return $this->onlyOnForms()
-            ->withMeta([ 'nmlJsCallback' => [$callback, $options] ]);
+            ->withMeta(['nmlJsCallback' => [$callback, $options]]);
     }
 }
