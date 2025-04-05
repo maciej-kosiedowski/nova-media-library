@@ -24,12 +24,12 @@
             {{ __('Select Files') }}
         </div>
 
-        <div class="mt-4" v-if="isForm && array && array.length">
-            <a class="dim text-primary inline-block cursor-pointer font-bold" @click="popup = true">
+        <div style="margin-top: 2rem;" class="mt-4" v-if="isForm && array && array.length">
+            <a @click="popup = true" class="shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-primary-500 hover:bg-primary-400 text-white dark:text-gray-900">
                 {{ __('Media Library') }}
             </a>
 
-            <a class="dim text-danger ml-8 inline-block cursor-pointer font-bold" @click="changeArray([])">
+            <a style="margin-left: 1rem;" class="shadow relative bg-white hover:bg-white text-red-500 border-1 border-red-500 hover:text-red-700 cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3" @click="changeArray([])">
                 {{ __('Clear') }}
             </a>
         </div>

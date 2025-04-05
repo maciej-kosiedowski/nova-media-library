@@ -9,10 +9,9 @@ export default {
     data() {
         let type = this.field.nmlArray;
         if ('auto' === type) type = 'list' === localStorage.getItem('nml-display') ? 'list' : 'gallery';
-
         return {
             popup: false,
-            isForm: this.$parent.$parent.$parent.isFormField === true,
+            isForm: this.$parent.$parent.isFormField === true,
             array: [],
             type,
         };
