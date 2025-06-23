@@ -23,6 +23,7 @@ export default {
             if (this.handler) this.handler(array);
         },
         remove(num) {
+
             this.changeArray(this.array.slice().filter((item, i) => i !== num));
         },
     },

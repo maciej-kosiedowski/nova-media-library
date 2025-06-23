@@ -1,17 +1,23 @@
 <template>
     <div>
         <draggable
-            :class="'flex flex-wrap space-x-3 nml-display-' + type"
+            :class="'flex flex-wrap  nml-display-' + type"
             v-if="array && array.length"
             item-key="id"
             v-model="array"
             @end="changeArray(array)"
         >
-            <template #item="{ element }">
-                <div class="relative w-32">
+            <template #item="{ element, index }">
+                <div class="relative w-32 mr-3 mb-3 group">
+
                     <div class="title truncate text-center" v-text="element.title || element.name" />
-                    <img class="h-40 w-32" :src="element.url" />
-                    <!-- <button v-if="isForm" @click="remove(i)">Remove</button> -->
+                    <button v-if="handler" @click="remove(index)" type="button"
+                        class="trash-icon absolute right-0 top-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    ></button>
+                    <a :href="element.url"
+                        target="_blank">
+                        <img class="h-40 w-32" :src="element.url" alt="" />
+                    </a>
                 </div>
             </template>
         </draggable>

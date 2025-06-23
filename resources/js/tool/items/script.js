@@ -8,7 +8,7 @@ export default {
   data() {
     return {
       checked: 'border border-red-300 rounded-md',
-      
+
     }
   },
   computed: {
@@ -47,8 +47,5 @@ export default {
         }
       }
     },
-    // test() {
-    //   console.log('Hello');
-    // }
   }
 }
